@@ -12,7 +12,6 @@ import java.util.regex.Pattern;
 public class FileTest {
 
     public static void main(String[] args){
-//        fileStaticParamsTest();
         fileTest2();
     }
 
