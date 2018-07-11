@@ -12,6 +12,7 @@ public class StreamTest {
         convertStreamReader();
     }
 
+    private static boolean shutDown = false;
     /**
      * 流转换：字节流转化为字符流
      */
@@ -24,6 +25,25 @@ public class StreamTest {
             while((line = bf.readLine()) != null){
                 if("exit".equals(line)){
                     System.exit(1);
+                }
+                else if("log".equals(line)){
+                    shutDown = false;
+                    new Thread(new Runnable() {
+                        public void run() {
+                            int i = 0;
+                            while(!shutDown){
+                                System.out.println("test" + i++);
+                                try {
+                                    Thread.sleep(1000);
+                                } catch (InterruptedException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                        }
+                    }).start();
+                }
+                else if("shutdown".equals(line)){
+                    shutDown = true;
                 }
                 System.out.println("输入内容：" + line);
             }
