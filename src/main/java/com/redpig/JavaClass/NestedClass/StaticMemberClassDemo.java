@@ -11,6 +11,7 @@ public class StaticMemberClassDemo {
     public StaticMemberClassDemo() {
     }
 
+
     public void setName(String name) {
         this.name = name;
     }
