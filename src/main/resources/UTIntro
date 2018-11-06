@@ -1,0 +1,28 @@
+PowerMock简介
+PowerMock是一个Java模拟框架，是在EasyMock以及Mockito基础上的扩展，可用于解决通常认为很难甚至无法测试的测试问题。
+使用PowerMock，可以模拟静态方法，删除静态初始化程序，允许模拟而不依赖于注入，等等。PowerMock通过在执行测试时在运行时修改字节码来完成这些技巧。PowerMock还包含一些实用程序，
+可让您更轻松地访问对象的内部状态。
+
+为什么使用PowerMock
+EasyMock以及Mockito都因为可以极大地简化单元测试的书写过程而被广泛使用，但是这2种Mock工具都不可以实现对静态函数、构造函数、私有函数、Final 函数以及系统函数的模拟。
+PowerMock是在EasyMock以及Mockito基础上的扩展，通过定制类加载器以及一些字节码篡改技巧的应用，PowerMock实现了对静态方法、构造方法、私有方法以及 Final 方法的模拟支持，对静态初始化过程的移除等强大的功能。
+PowerMock优点：
+1.“Pwoer”，可以实现对静态函数、构造函数、私有函数、Final函数以及系统函数的模拟。
+2.因为PowerMock在扩展功能时完全采用和被扩展的框架相同的API, 熟悉PowerMock所支持的模拟框架的开发者会发现 PowerMock 非常容易上手。PowerMock的目的就是在当前已经被大家所熟悉的接口上通过添加极少的方法和注释来实现额外的功能，PowerMock支持EasyMock和Mockito。
+
+PowerMock原理简介
+
+常见UT场景技巧
+1.mock 普通方法
+2.mock void方法
+3.mock 私有方法
+4.mock 静态方法
+5.mock final方法
+6.mock new新对象
+7.mock final类
+8.mock 系统类
+9.同一个方法预期返回不同的值
+10.mock 抛异常
+11.访问私有实例（类）属性
+11.测试私有实例（类）方法
+
