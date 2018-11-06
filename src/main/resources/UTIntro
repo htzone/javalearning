@@ -13,16 +13,143 @@ PowerMock优点：
 PowerMock原理简介
 
 常见UT场景技巧
-1.mock 普通方法
-2.mock void方法
-3.mock 私有方法
-4.mock 静态方法
-5.mock final方法
-6.mock new新对象
-7.mock final类
-8.mock 系统类
-9.同一个方法预期返回不同的值
-10.mock 抛异常
-11.访问私有实例（类）属性
-11.测试私有实例（类）方法
+
+mock与真正执行的区别
+mock就是模拟的意思，指不需要去真正执行，只需要达到我们的预期即可。
+在被测试代码需要调用某些接口的时候，直接模拟一个假的接口，并指定该接口一个预期的行为，可以极大的简化了单元测试的编写过程，提高单元测试的效率。
+
+被测试代码：
+public class Calculator {
+
+    public int calc(int start, int end)
+    {
+        logInfo(start, end);
+        if(CheckUtil.check(start, end))
+        {
+            return calcFunc(start, end);
+        }
+        return 0;
+    }
+
+    private int calcFunc(int start, int end)
+    {
+        int sum = 0;
+        for(int i = start; i<=end; i++)
+        {
+            sum += i;
+        }
+        return sum;
+    }
+
+    public void logInfo(int start, int end)
+    {
+        System.out.println("start:" + start + ", end:" + end);
+    }
+}
+
+public class CheckUtil {
+
+    public static boolean check(int a, int b)
+    {
+        checkInfo(a, b);
+        return checkFunc(a, b);
+    }
+
+    private static boolean checkFunc(int a, int b)
+    {
+        return a > 0 && b > 0;
+    }
+
+    private static void checkInfo(int a, int b)
+    {
+        System.out.println("check info...");
+    }
+}
+
+mock 普通方法
+XXX xxx = PowerMockito.mock(XXX.class);
+//带返回值的方法
+PowerMockito.when(xxx.methodXXX()).thenReturn(XX);
+//不带返回值的方法
+PowerMockito.doNothing().when(xxx).methodXXX();
+
+模糊参数匹配
+mock方法时可以不用传入固定的参数，可以传一个模糊的参数匹配任意该类型的参数
+Mockito.any(XXX.class)
+Mockito.anyInt()
+Mockito.anyFloat()
+Mockito.anyDouble()
+Mockito.anyString()
+Mockito.any(int[].class)
+......
+注意：一旦有一个参数使用模糊匹配，则该方法全部参数都要使用模糊匹配，否则会报错。
+
+mock 私有方法
+方法1：使用mock对象，真正要执行的方法调用thenCallRealMethod()，表明在执行该方法的时候要正常执行，不想执行的方法则使用mock。
+Calculator calculator = PowerMockito.mock(Calculator.class);
+PowerMockito.when(calculator.calc(Mockito.anyInt(), Mockito.anyInt())).thenCallRealMethod();
+PowerMockito.when(calculator, "calcFunc", Mockito.anyInt(), Mockito.anyInt()).thenReturn(1);
+int result = calculator.calc(1, 10);
+Assert.assertEquals(1, result);
+
+方法2：使用spy监听对象，对它进行方法调用时，它将调用真实的方法，不想执行的方法也可以mock让其返回预期。
+Calculator calculator = PowerMockito.spy(new Calculator());
+PowerMockito.when(calculator, "calcFunc", Mockito.anyInt(), Mockito.anyInt()).thenReturn(1);
+int result = calculator.calc(1, 10);
+Assert.assertEquals(1, result);
+
+注意：要mock私有方法，必须要在@PrepareForTest中加入私有方法所在的类。
+对于final类、匿名类和Java的基本类型是无法进行spy的。
+
+mock 静态方法
+PowerMockito.mockStatic(CheckUtil.class);
+//带返回值
+PowerMockito.when(CheckUtil.check(Mockito.anyInt(), Mockito.anyInt())).thenReturn(false);
+//不带返回值
+PowerMockito.doNothing().when(CheckUtil.class, "checkInfo", Mockito.anyInt(), Mockito.anyInt());
+
+注意：要mock静态方法，必须要在@PrepareForTest中加入静态方法所在的类。
+
+mock final方法
+在@PrepareForTest中加入该final方法所在的类。
+//XXX为包含final方法的类
+XXX xxx = PowerMockito.mock(XXX.class);
+PowerMockito.when(xxx.finalmethodXXX()).thenReturn(XX);
+注意：要调用final方法，必须要在@PrepareForTest中加入该final方法所在的类。
+
+mock new新对象
+Calculator calculator = PowerMockito.mock(Calculator.class);
+PowerMockito.whenNew(Calculator.class).withNoArguments().thenReturn(calculator);
+PowerMockito.when(calculator.calc(Mockito.anyInt(), Mockito.anyInt())).thenReturn(1);
+注意：必须要在@PrepareForTest中加入new对象所在的类。
+
+mock final类
+//XXX为final修饰的类
+XXX xxx = PowerMockito.mock(XXX.class);
+注意：必须要在@PrepareForTest中加入该final类。
+
+mock 系统类
+//XXX为系统类
+XXX xxx = PowerMockito.mock(XXX.class);
+注意：必须要在@PrepareForTest中加入使用该系统类的类。
+
+同一个方法预期返回不同的值
+每次调用该方法会返回不同的值，返回的顺序为thenReturn中的顺序。
+PowerMockito.when(xxx.methodXXX()).thenReturn(XX1, XX2, XX3...);
+
+mock 抛异常
+//带返回值
+PowerMockito.when(xxx.methodXXX()).thenThrow(new XXXException());
+//不带返回值
+PowerMockito.doThrow(new XXXException()).when(xxx).methodXXX();
+
+访问私有构造器
+Whitebox.invokeConstructor(..)
+访问私有实例（类）属性
+Whitebox.setInternalState(..)
+Whitebox.getInternalState(..)
+测试私有实例（类）方法
+Whitebox.invokeMethod(..)
+
+
 
