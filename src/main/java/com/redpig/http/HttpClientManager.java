@@ -10,8 +10,6 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.net.InetAddress;
@@ -38,11 +36,9 @@ public class HttpClientManager {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		log.info("result:" + content);
 	}
 	
-	private final static Logger log = LoggerFactory.getLogger(HttpClientManager.class);
-	
+
 	/**
 	 * get请求，post请求
 	 */
@@ -120,9 +116,6 @@ public class HttpClientManager {
 			this.requestBuilder = RequestBuilder.get(url);
 		}else if(METHOD_POST.equalsIgnoreCase(method)){
 			this.requestBuilder = RequestBuilder.post(url);
-		}
-		else{
-			log.error("请指定请求方法！");
 		}
 	}
 	
@@ -301,7 +294,6 @@ public class HttpClientManager {
 			if (this.response != null && this.respState == 200) { //请求成功
 				return this.response.getEntity();
 			}
-			log.error("请求URL:" + this.url + " 失败，" + (this.response != null ? "状态码为：" + this.response.getStatusLine().getStatusCode() : "返回结果为空..."));
 			return (this.response != null ? this.response.getEntity() : null);
 		} catch (Exception e){
 			if(this.response != null){
@@ -376,7 +368,6 @@ public class HttpClientManager {
 	 * 请求结束操作
 	 */
 	public void callOver(){
-		log.debug("请求URL：" + this.url + "共耗时" + (float)(System.currentTimeMillis() - this.startTime)/1000 + "秒");
 		EntityUtils.consumeQuietly(this.respEntity);
 		if(this.response != null){
 			try {
